@@ -22,6 +22,8 @@ tags:
 
 同时，可以添加`webpack-bundle-analyzer`用于分析生成的包。
 
+<!-- more -->
+
 ```javascript
 if (process.env.npm_config_report) { // 
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
