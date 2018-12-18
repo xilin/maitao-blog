@@ -28,9 +28,9 @@ tags:
 
 此插件支持如下配置选项:
 
-- `clear` (<Boolean>): 在启动 `webpack` 时清空 `dist` 目录。默认为 `true`
-- `commonModuleName` (<String>): 公共 `js` 文件名。默认为 `common.js`
-- `extensions` (<Array<String>>): 脚本文件后缀名。默认为 `['.js']`
+- `clear`: 在启动 `webpack` 时清空 `dist` 目录。默认为 `true`
+- `commonModuleName`: 公共 `js` 文件名。默认为 `common.js`
+- `extensions`: 脚本文件后缀名。默认为 `['.js']`
 
 <!-- more -->
 
@@ -102,11 +102,11 @@ webpack的相关的工作流程可以阅读参考这篇插件介绍的文章[^3]
 
 先调用`enforceTarget`规范化target对象。
 
-然后依次绑定了`run`/`watch-run`/`emit`/`after-emit`四个生命周期hook[^8]。在`run`的hook中，还会绑定`compilation` hook。
+然后依次绑定了`run`/`watch-run`/`emit`/`after-emit`四个生命周期hook[^8]。在`run`的hook中，还会绑定`compilation hook`。
 
-### `run` hook
+### `run hook`
 
-`run` hook绑定了`run`方法。
+`run hook`绑定了`run`方法。
 
 首先，获取base路径(`getBase`)。如果参数指定了base，直接使用。否则，尝试返回entry中app.js所在的目录。否则，使用context路径。
 
@@ -121,42 +121,42 @@ webpack的相关的工作流程可以阅读参考这篇插件介绍的文章[^3]
   - subPackages里定义的pages
   - 所有的components。
 
-接着，绑定了compiler的`compilation` hook。这里用了一个处理proposal状态的bind syntax[^9]，保证`toModifyTemplate`方法的this是当前类实例。
+接着，绑定了compiler的`compilation hook`。这里用了一个处理proposal状态的bind syntax[^9]，保证`toModifyTemplate`方法的this是当前类实例。
 
 之后，调用`compileScripts`编译脚本资源。
 
 - 执行`applyCommonsChunk`，拿到所有`entryResources`的完整路径，添加`CommonsChunkPlugin`，保证所有*不属于* `entryResources`的js文件都被打包成`commonModuleName`。
-- 把所有app.js以外的资源文件，调用`addScriptEntry`添加到entry中。这个注册方法是绑定了`make` hook，用`SingleEntryPlugin.createDependency`创建依赖，再调用`compilation.addEntry`添加。*这里一个tricky的地方在于添加依赖时name带了路径，配合webpack配置中output规则指定`[name].js`，保证输出的时候会生成在指定目录下。*
+- 把所有app.js以外的资源文件，调用`addScriptEntry`添加到entry中。这个注册方法是绑定了`make hook`，用`SingleEntryPlugin.createDependency`创建依赖，再调用`compilation.addEntry`添加。*这里一个tricky的地方在于添加依赖时name带了路径，配合webpack配置中output规则指定`[name].js`，保证输出的时候会生成在指定目录下。*
 
 最后，调用`compileAssets`引入 assets。
 
-- 注册`compiler`的`compilation` hook，在`compilation`的`before-chunk-assets` hook中，把`assetsChunkName`对应的下一步骤中引入 的所有资源文件剔除出chunks。
+- 注册`compiler`的`compilation hook`，在`compilation`的`before-chunk-assets hook`中，把`assetsChunkName`对应的下一步骤中引入 的所有资源文件剔除出chunks。
 - 用`globby`匹配到所有非`.js`文件，即所有entryResource相关的`.json/.wxml/.wxss`文件。作为chunk用`MultiEntryPlugin`注册为assets。*这样，配合`file-loader`的规则，可以实现将资源文件输出到对应的目录下。*
   - `file-loader`的执行时机是在`compilation`的`buildModule`阶段，会在`beforeChunkAssets`之前执行。
 
-### `watch-run` hook
+### `watch-run hook`
 
-同`run` hook处理。
+同`run hook`处理。
 
-### `compilation` hook
+### `compilation hook`
 
 调用`toModifyTemplate`方法，做了三件事：
 
-- 注册chunkTemplate的`render` hook，在生成的source结尾添加一段注入`commonModuleName`的代码：
+- 注册chunkTemplate的`render hook`，在生成的source结尾添加一段注入`commonModuleName`的代码：
 
 - ```javascript
   const injectContent = `; function webpackJsonp() { require("./${posixPath}"); ${globalVar}.webpackJsonp.apply(null, arguments); }`;
   ```
 
-- 注册mainTemplate的`bootstrap` hook，把`window`替换为global变量，在微信小程序中即是`wx`
+- 注册mainTemplate的`bootstrap hook`，把`window`替换为global变量，在微信小程序中即是`wx`
 
-- 注册mainTemplate的`require-ensure` hook，去除动态加载能力
+- 注册mainTemplate的`require-ensure hook`，去除动态加载能力
 
-### `emit` hook
+### `emit hook`
 
 如果参数中指定了`clear`，在第一次运行时会清空output目录。然后调用`toEmitTabBarIcons`，遍历之前通过`app.json`文件获得的`tabBarIcons`资源，添加到`compilation`的`assets`数组中。
 
-### `after-emit` hook
+### `after-emit hook`
 
 调用`toAddTabBarIconsDependencies`方法，保证`compilation`的`fileDependencies`里存在`tabBarIconPath`。这里的判断条件用了一个小技巧，通过按位取反`~`来判断是否存在[^10]。
 
