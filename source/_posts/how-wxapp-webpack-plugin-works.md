@@ -6,19 +6,19 @@ author: xi.lin
 
 categories:
 
-\- 源码学习
+- 源码学习
 
 tags:
 
-\- 微信小程序
+- 微信小程序
 
-\- webpack
+- webpack
 
-\---
+---
 
-# `wxapp-webpack-plugin`[^1]简介
+# `wxapp-webpack-plugin`简介
 
-以下摘抄自项目的readme文档：
+以下摘抄自项目的readme文档[^1]：
 
 > - 微信小程序开发需要有多个入口文件（如 `app.js`, `app.json`, `pages/index/index.js` 等等），使用这个插件只需要引入 `app.js` 即可，其余文件将会被自动引入
 > - 若多个入口文件（如 `pages/index/index.js` 和 `pages/logs/logs.js`）引入有相同的模块，这个插件能避免重复打包相同模块
