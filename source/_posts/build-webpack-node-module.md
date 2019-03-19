@@ -1,9 +1,9 @@
 title: 制作使用webpack构建的Node.js模块项目
-
 date: 2018-11-30 18:39:38
-
+author: xi.lin
+categories:
+- web
 tags:
-
 - webpack
 - node.js
 - module
