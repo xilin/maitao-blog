@@ -2,6 +2,12 @@ title: 升级到webpack4所踩的坑（一）
 
 date: 2019-03-19 14:18:45
 
+author: chongyang.li, xi.lin
+
+categories:
+
+- web
+
 tags:
 - 构建工具
 - webpack
@@ -30,8 +36,33 @@ tags:
 ```
 用来取消webpack对于node保留变量不存在是的赋值，然而还是没有work。
 
-同事介入后用defineProperty在setImmediate方法的setter中加入了断点，对比旧代码发现是bable-polyfill中的core-js对这个方法进行了重写，而在chrome环境里默认全局没有此方法，查了MDN文档发现确实如此，除了IE其他的浏览器全都没有实现此方法，
+打开旧环境，在devtool上执行setImmediate可以看到
+
+```javascript
+function setImmediate() {
+    [native code]
+}
+```
+
+的输出。但根据MDN文档，该方法只有IE做了实现，chrome默认应该没有此方法，为了找到旧代码是如何为setImmediate赋值的，我们利用iOS native的webview容器提前运行defineProperty来添加断点（为了保证能在页面所有代码加载之前运行，直接在header最前端添加script段应该也可以），注入的代码如下:
+
+```javascript
+var actualSetImmediate = window.setImmediate;
+Object.defineProperty(window, 'setImmediate', {
+    set: function(newValue) {
+        debugger;
+        actualSetImmediate = newValue;
+    },
+    get: function() {
+        return actualSetImmediate;
+    }
+});
+```
+
+打开safari，调试simulator中的页面，可以看到是bable-polyfill中的core-js重写了setImmediate方法。而console中查看该方法显示为native code则是core-js为了保证lodash之类的第三方库能识别polyfill的方法而做的障眼法，[重写了toString](https://stackoverflow.com/a/42059050/535374)。
+
 所以webpack需要polyfill来进行支持，而搜索了新环境的runtime后却没有发现babel-polyfill的影子，这时候突然想起在webpack配置文件升级的时候，把所有entry数组开头的['babel-polyfill']都删除了,原因是升级时并不知道这么写作用是什么。
+
 ```javascript
 function getEntry(globPath) {
   var entries = {},filename;
