@@ -16,10 +16,12 @@ tags:
 ## background
 麦淘前端系统在初次重构时使用的webpack版本为3.10.0, vue版本为2.5.2。由于是多页面结构，项目在develop和product环境下的构建速度非常慢，并且随着项目规模的增大，问题更加明显。这一次希望通过webpack的升级，利用较新的特性来优化构建速度并且简化配置项，增加项目维护性。
 
-### 记录第一个升级过程中卡住很久的issue
+## 记录第一个升级过程中卡住很久的issue
 升级了相关的包和依赖之后尝试在develop环境下启动，结果出现如下报错：
 
 ![error1.jpg](https://img.maitao.com/3a38fef2-0d1e-4926-9a3d-f49d92b6fc61.jpg?imageView2/2/w/400/q/80/format/jpg)![error2.jpg](https://img.maitao.com/1bd568a3-89ee-4649-941d-38b1c3456e40.jpg?imageView2/2/w/400/q/80/format/jpg)
+
+<!-- more -->
 
 通过对比现有环境的代码执行路径发现，本该执行第一个分支的代码进入了第二个分支，而之前由于bfcache的某些原因，我们在脚本前期初始化了MesssageChannel为null,从而引发了这个问题。
 回过头看为什么代码为什么没有进入第一分支，显然是setImmedate这个方法出现了问题，debug发现setImmediate方法是存在的但是并不是native code，而是由第三方模块setimmediate.js注入的代码。怀疑global.setImmedate方法被这个模块重写而导致了异常，阅读setImmediate.js代码后发现：
