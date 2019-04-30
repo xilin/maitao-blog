@@ -1,4 +1,4 @@
-title: JavaScriptCore oc2js的限制
+title: JavaScriptCore中字典数据的限制
 
 date: 2019-04-30 17:07:40
 
@@ -14,8 +14,6 @@ tags:
 - iOS
 
 ------
-
-# JavaScriptCore中字典数据的限制
 
 ## 问题背景
 
