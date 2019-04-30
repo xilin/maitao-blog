@@ -68,11 +68,11 @@ static void checkNegativeNSIntegers()
 
 这次的问题涉及两次数据转换。一次是从oc定义转换到js里的对象，一次是从js里的结果对象返回到oc层。
 
-一开始我怀疑是在js返回oc对象时被过滤了，所以在`containerValueToObject`里下了断点，发现在取propertyName的时候就已经没有数字的那个key了。![js2oc](https://ws2.sinaimg.cn/large/006tNc79gy1g2ktnig765j30x50i5gt4.jpg)
+一开始我怀疑是在js返回oc对象时被过滤了，所以在`containerValueToObject`里下了断点，发现在取propertyName的时候就已经没有数字的那个key了。![js2oc](http://ww1.sinaimg.cn/large/6e8cb483gy1g2kuwjt5xpj20x50i5gt4.jpg)
 
 那么问题应该就是出在oc对象转换到js这一层的时候。跟踪`evaluateScript:`方法，发现原因就是在`JSValue.mm`这个文件的`objectToValue`方法中，在1045行上，只有`[key isKindOfClass:[NSString class]]`时，才会存下字典项。
 
-![oc2js](https://ws2.sinaimg.cn/large/006tNc79gy1g2ktqpq6jmj31090htwn9.jpg)
+![oc2js](http://ww1.sinaimg.cn/large/6e8cb483gy1g2kuwybv6qj21090htwn9.jpg)
 
 ## 依据
 
