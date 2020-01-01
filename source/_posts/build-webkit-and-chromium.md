@@ -9,6 +9,11 @@ tags:
 - bfcache
 ---
 
+> 19年已经有了进展，可以参考
+> 1. [Back-forward cache](https://www.chromestatus.com/feature/5815270035685376)
+> 2. [Exploring a back/forward cache for Chrome](https://developers.google.com/web/updates/2019/02/back-forward-cache)
+> 3. [Google implements backward-forward cache in Chrome 79 Canary](https://www.ghacks.net/2019/09/20/google-implements-backward-forward-cache-in-chrome-79-canary/)
+
 在升级VUE版本后发现移动站的bfcache功能失效了，为了更好的调试问题编译了两大移动平台的webview源码进行探究。
 <!-- more -->
 
