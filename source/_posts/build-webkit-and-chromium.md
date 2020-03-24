@@ -112,8 +112,11 @@ $ ninja -C out/gn chrome
 *漫长的等待第三遍*，在配置为*i5-4670/32G RAM/机械硬盘*的电脑上用了大概6小时。
 
 ## bfcache相关
-[Investigate faster back/forward page navigation](https://bugs.chromium.org/p/chromium/issues/detail?id=511340) 未实现
-[Back/Forward Cache](https://docs.google.com/document/d/13ZlBgcA4X-AEbe6Xt4OdY9rVhYwFfeXVC1KndFufrfA) qq浏览器的设计讨论
+
+- [Investigate faster back/forward page navigation](https://bugs.chromium.org/p/chromium/issues/detail?id=511340) 未实现
+- [Back/Forward Cache](https://docs.google.com/document/d/13ZlBgcA4X-AEbe6Xt4OdY9rVhYwFfeXVC1KndFufrfA) qq浏览器的设计讨论
+- [在ios的safari上bfcache失效](https://github.com/vuejs/vue/issues/8109#issuecomment-391920208) vue的一个失效例子
+- [bfcache失效问题](https://www.v2ex.com/t/457389) core-js也可能导致问题
 
 ## 参考
 * [1. 官方mac build指南](https://chromium.googlesource.com/chromium/src/+/master/docs/mac_build_instructions.md)
